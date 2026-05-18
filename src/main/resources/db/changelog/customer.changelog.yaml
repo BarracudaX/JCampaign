@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: "Barracuda"
+      dbms: postgresql
+      changes:
+        - createTable:
+            tableName: "customers"
+            columns:
+              - column:
+                  name: "id"
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: "first_name"
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "last_name"
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "email"
+                  type: varchar(254)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: "CUSTOMERS_UNIQUE_EMAIL_CONSTRAINT"
+              - column:
+                  name: "phone_number"
+                  type: varchar(15)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: "CUSTOMERS_UNIQUE_PHONE_NUMBER_CONSTRAINT"
+  - changeSet:
+      id: 2
+      author: "Barracuda"
+      changes:
+        - createSequence:
+            sequenceName: "customers_seq"
+            dataType: "bigint"
+            incrementBy: 50
+            startValue: 1

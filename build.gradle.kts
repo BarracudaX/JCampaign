@@ -27,6 +27,12 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
+
+    implementation("org.mapstruct:mapstruct:1.6.3")
+
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+
+
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")

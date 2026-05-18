@@ -3,6 +3,7 @@ package com.barracuda.jcampaign.domain;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "customers")
 public class Customer {
 
     @Id

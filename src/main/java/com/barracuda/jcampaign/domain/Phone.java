@@ -5,17 +5,17 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class Phone {
 
-    String number;
+    String phoneNumber;
 
     public Phone(String number) {
-        this.number = number;
+        this.phoneNumber = number;
     }
 
     public Phone() {
 
     }
 
-    public String getNumber() {
-        return number;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 }
