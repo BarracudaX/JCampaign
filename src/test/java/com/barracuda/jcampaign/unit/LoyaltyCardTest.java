@@ -1,6 +1,8 @@
 package com.barracuda.jcampaign.unit;
 
 import static org.assertj.core.api.Assertions.*;
+
+import com.barracuda.jcampaign.ErrorMessages;
 import com.barracuda.jcampaign.domain.LoyaltyCard;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +22,7 @@ public class LoyaltyCardTest {
 
         assertThatThrownBy(() -> loyaltyCard.setExpiryDate(invalidExpiryDate))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining(LoyaltyCard.INVALID_EXPIRY_DATE_ERROR_MESSAGE);
+                .hasMessageContaining(ErrorMessages.INVALID_EXPIRY_DATE_ERROR_MESSAGE);
     }
 
     @Test
@@ -45,7 +47,7 @@ public class LoyaltyCardTest {
     void shouldThrowIAEWhenTryingToAddNegativePoints() {
         loyaltyCard.addPoints(100);
 
-        assertThatThrownBy(() -> loyaltyCard.addPoints(-1)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(LoyaltyCard.INVALID_ADD_POINTS_VALUE_ERROR_MESSAGE);
+        assertThatThrownBy(() -> loyaltyCard.addPoints(-1)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(ErrorMessages.INVALID_ADD_POINTS_VALUE_ERROR_MESSAGE);
         assertThat(loyaltyCard.getPoints()).isEqualTo(100);
     }
 
@@ -62,7 +64,7 @@ public class LoyaltyCardTest {
     void shouldThrowIAEWhenTryingToSubtractMorePointsThanTheCardHas() {
         loyaltyCard.addPoints(100);
 
-        assertThatThrownBy(() -> loyaltyCard.subtractPoints(110)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(LoyaltyCard.INVALID_SUBTRACTING_MORE_THAN_POSSIBLE_POINTS_ERROR_MESSAGE.formatted(110,100));
+        assertThatThrownBy(() -> loyaltyCard.subtractPoints(110)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(ErrorMessages.INVALID_SUBTRACTING_MORE_THAN_POSSIBLE_POINTS_ERROR_MESSAGE.formatted(110,100));
 
         assertThat(loyaltyCard.getPoints()).isEqualTo(100);
     }
@@ -71,7 +73,7 @@ public class LoyaltyCardTest {
     void shouldThrowIAEWhenSubtractingNegativePoints() {
         loyaltyCard.addPoints(100);
 
-        assertThatThrownBy(() -> loyaltyCard.subtractPoints(-10)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(LoyaltyCard.INVALID_SUBTRACTING_NEGATIVE_POINTS_ERROR_MESSAGE);
+        assertThatThrownBy(() -> loyaltyCard.subtractPoints(-10)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(ErrorMessages.INVALID_SUBTRACTING_NEGATIVE_POINTS_ERROR_MESSAGE);
 
         assertThat(loyaltyCard.getPoints()).isEqualTo(100);
     }
@@ -117,13 +119,13 @@ public class LoyaltyCardTest {
     void shouldNotBeAbleToAddPointsToALockedCard() {
         loyaltyCard.lock();
 
-        assertThatThrownBy(() -> loyaltyCard.addPoints(100)).isInstanceOf(IllegalStateException.class).hasMessageContaining(LoyaltyCard.INVALID_ADD_OPERATION_ERROR_MESSAGE);
+        assertThatThrownBy(() -> loyaltyCard.addPoints(100)).isInstanceOf(IllegalStateException.class).hasMessageContaining(ErrorMessages.INVALID_ADD_OPERATION_ERROR_MESSAGE);
     }
 
     @Test
     void shouldNotBeAbleToSubtractPointsFromALockedCard() {
         loyaltyCard.lock();
 
-        assertThatThrownBy(() -> loyaltyCard.subtractPoints(10)).isInstanceOf(IllegalStateException.class).hasMessageContaining(LoyaltyCard.INVALID_SUBTRACT_OPERATION_ERROR_MESSAGE);
+        assertThatThrownBy(() -> loyaltyCard.subtractPoints(10)).isInstanceOf(IllegalStateException.class).hasMessageContaining(ErrorMessages.INVALID_SUBTRACT_OPERATION_ERROR_MESSAGE);
     }
 }
