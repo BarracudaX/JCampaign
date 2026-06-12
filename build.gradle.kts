@@ -29,6 +29,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
 
     implementation("org.mapstruct:mapstruct:1.6.3")
+    implementation("commons-validator:commons-validator:1.10.1")
+    implementation("com.googlecode.libphonenumber:libphonenumber:9.0.31")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 
@@ -43,7 +45,6 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.assertj:assertj-core")
 }
 
 tasks.withType<Test> {
