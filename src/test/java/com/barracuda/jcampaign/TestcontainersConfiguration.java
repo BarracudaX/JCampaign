@@ -6,13 +6,18 @@ import org.springframework.context.annotation.Bean;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.List;
+
 @TestConfiguration(proxyBeanMethods = false)
 class TestcontainersConfiguration {
 
     @Bean
     @ServiceConnection
     PostgreSQLContainer postgresContainer() {
-        return new PostgreSQLContainer(DockerImageName.parse("postgres:latest"));
+        var container = new PostgreSQLContainer(DockerImageName.parse("postgres:latest"));
+        container.setPortBindings(List.of("5432:5432"));
+        container.withPassword("password").withUsername("postgres").withDatabaseName("test");
+        return container;
     }
 
 }
