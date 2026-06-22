@@ -4,19 +4,26 @@ import com.barracuda.jcampaign.ErrorMessages;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
+import static com.barracuda.jcampaign.ErrorMessages.*;
+
 @Entity
+@Table(name = "loyalty_cards")
+@Getter
+@ToString
 public class LoyaltyCard {
+
     @Id
     private Long id;
 
     private String name;
-
-    @ManyToOne
-    private Customer owner;
 
     @CreationTimestamp
     private LocalDate createdDate;
@@ -25,12 +32,9 @@ public class LoyaltyCard {
 
     private CardState state = CardState.UNLOCKED;
 
+    @Setter
     private long points;
 
-
-    public Long getId() {
-        return id;
-    }
 
     public void setExpiryDate(LocalDate expiryDate) {
         if(expiryDate.isBefore(LocalDate.now())) {
@@ -39,36 +43,37 @@ public class LoyaltyCard {
         this.expiryDate = expiryDate;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Customer getOwner() {
-        return owner;
-    }
-
-    public LocalDate getCreatedDate() {
-        return createdDate;
-    }
-
-    public LocalDate getExpiryDate() {
-        return expiryDate;
-    }
-
     public boolean isLocked() {
         return state == CardState.LOCKED;
     }
 
-    public long getPoints() {
-        return points;
-    }
-
     public void addPoints(long points) {
-        this.state.addPoints(this,points);
+
+        switch (state) {
+            case LOCKED -> throw new IllegalStateException(INVALID_ADD_OPERATION_ERROR_MESSAGE);
+            case UNLOCKED -> {
+                if (points < 0) {
+                    throw new IllegalArgumentException(INVALID_ADD_POINTS_VALUE_ERROR_MESSAGE);
+                }
+                setPoints(this.points + points);
+            }
+        }
+
     }
 
     public void subtractPoints(long points) {
-        this.state.subtractPoints(this,points);
+        switch (state){
+            case LOCKED -> throw new IllegalStateException(INVALID_SUBTRACT_OPERATION_ERROR_MESSAGE);
+            case UNLOCKED -> {
+                if (points < 0) {
+                    throw new IllegalArgumentException(INVALID_SUBTRACTING_NEGATIVE_POINTS_ERROR_MESSAGE);
+                }
+                if (points > getPoints()) {
+                    throw new IllegalArgumentException(INVALID_SUBTRACTING_MORE_THAN_POSSIBLE_POINTS_ERROR_MESSAGE.formatted(points, getPoints()));
+                }
+                setPoints(this.points - points);
+            }
+        }
     }
 
     public void lock() {
@@ -79,7 +84,4 @@ public class LoyaltyCard {
         this.state = CardState.UNLOCKED;
     }
 
-    public void setPoints(long points) {
-        this.points = points;
-    }
 }
