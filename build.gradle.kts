@@ -2,6 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "4.0.6"
     id("io.spring.dependency-management") version "1.1.7"
+    id("io.freefair.lombok") version "9.5.0"
 }
 
 group = "com.barracuda"
@@ -28,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
 
+    implementation("org.flowable:flowable-spring-boot-starter:8.0.0")
     implementation("org.mapstruct:mapstruct:1.6.3")
     implementation("commons-validator:commons-validator:1.10.1")
     implementation("com.googlecode.libphonenumber:libphonenumber:9.0.31")
