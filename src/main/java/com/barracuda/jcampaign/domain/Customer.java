@@ -18,7 +18,7 @@ public class Customer {
 
     private String lastName;
 
-    @ManyToOne
+    @OneToOne
     private LoyaltyCard loyaltyCard;
 
     @Embedded
