@@ -1,4 +1,7 @@
-services:
+include:
+  - compose/docker-compose.yml
+
+#services:
 
 #  controller:
 #    image: apache/kafka:4.2.0
@@ -66,12 +69,5 @@ services:
 #      KAFKA_BROKERCONNECT: "broker-1:9092"
 #    depends_on:
 #      - "broker-1"
-
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
 networks:
   kafka-net:

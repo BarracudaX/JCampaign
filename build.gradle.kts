@@ -28,8 +28,8 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
+    implementation ("io.temporal:temporal-spring-boot-starter:1.36.0")
 
-    implementation("org.flowable:flowable-spring-boot-starter:8.0.0")
     implementation("org.mapstruct:mapstruct:1.6.3")
     implementation("commons-validator:commons-validator:1.10.1")
     implementation("com.googlecode.libphonenumber:libphonenumber:9.0.31")
