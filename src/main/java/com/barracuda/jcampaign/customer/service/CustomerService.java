@@ -19,9 +19,7 @@ public class CustomerService {
     public CustomerDTO createCustomer(CreateCustomerForm createCustomerForm) {
         Customer customer = CustomerMapper.INSTANCE.customerCreateFormToCustomer(createCustomerForm);
 
-        customerRepository.save(customer);
-        
-        return CustomerMapper.INSTANCE.customerToCustomerDTO(customer);
+        return CustomerMapper.INSTANCE.customerToCustomerDTO(customerRepository.save(customer));
     }
 
 }
