@@ -1,10 +1,9 @@
-package com.barracuda.jcampaign.mapping;
+package com.barracuda.jcampaign.customer.mapping;
 
-import com.barracuda.jcampaign.domain.Customer;
-import com.barracuda.jcampaign.dto.CreateCustomerForm;
-import com.barracuda.jcampaign.dto.CustomerDTO;
+import com.barracuda.jcampaign.customer.domain.Customer;
+import com.barracuda.jcampaign.customer.dto.CreateCustomerForm;
+import com.barracuda.jcampaign.customer.dto.CustomerDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper

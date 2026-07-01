@@ -1,11 +1,10 @@
-package com.barracuda.jcampaign.service;
+package com.barracuda.jcampaign.customer.service;
 
-import com.barracuda.jcampaign.domain.Customer;
-import com.barracuda.jcampaign.dto.CreateCustomerForm;
-import com.barracuda.jcampaign.dto.CustomerDTO;
-import com.barracuda.jcampaign.mapping.CustomerMapper;
-import com.barracuda.jcampaign.repository.CustomerRepository;
-import jakarta.transaction.Transactional;
+import com.barracuda.jcampaign.customer.domain.Customer;
+import com.barracuda.jcampaign.customer.dto.CreateCustomerForm;
+import com.barracuda.jcampaign.customer.dto.CustomerDTO;
+import com.barracuda.jcampaign.customer.mapping.CustomerMapper;
+import com.barracuda.jcampaign.customer.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 @Service

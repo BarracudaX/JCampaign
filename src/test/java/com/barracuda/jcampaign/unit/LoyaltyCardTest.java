@@ -3,7 +3,7 @@ package com.barracuda.jcampaign.unit;
 import static org.assertj.core.api.Assertions.*;
 
 import com.barracuda.jcampaign.ErrorMessages;
-import com.barracuda.jcampaign.domain.LoyaltyCard;
+import com.barracuda.jcampaign.customer.domain.LoyaltyCard;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

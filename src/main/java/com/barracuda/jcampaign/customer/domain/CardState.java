@@ -1,4 +1,4 @@
-package com.barracuda.jcampaign.domain;
+package com.barracuda.jcampaign.customer.domain;
 
 public enum CardState {
     LOCKED,

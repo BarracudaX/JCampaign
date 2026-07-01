@@ -1,21 +1,18 @@
-package com.barracuda.jcampaign.domain;
+package com.barracuda.jcampaign.customer.domain;
 
 import com.barracuda.jcampaign.ErrorMessages;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 
 import static com.barracuda.jcampaign.ErrorMessages.*;
 
-@Entity
-@Table(name = "loyalty_cards")
+@Table(name = "customers")
 @Getter
 @ToString
 public class LoyaltyCard {
@@ -25,7 +22,7 @@ public class LoyaltyCard {
 
     private String name;
 
-    @CreationTimestamp
+    @CreatedDate
     private LocalDate createdDate;
 
     private LocalDate expiryDate;
