@@ -7,21 +7,16 @@ import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table(name = "customers")
-@Getter
-@ToString
-public class Customer {
+public record Customer(
+        @Id
+        Long id,
 
-    @Id
-    private Long id;
+        String firstName,
 
-    private String firstName;
+        String lastName,
 
-    private String lastName;
+        @Embedded.Nullable Email email,
 
-
-    @Embedded.Nullable
-    private Email email;
-
-    @Embedded.Nullable
-    private Phone phone;
+        @Embedded.Nullable Phone phone
+) {
 }
