@@ -1,6 +1,6 @@
-package com.barracuda.jcampaign.customer.repository;
+package com.barracuda.jcampaign.loyaltycard.repository;
 
-import com.barracuda.jcampaign.customer.domain.LoyaltyCard;
+import com.barracuda.jcampaign.loyaltycard.domain.LoyaltyCard;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
