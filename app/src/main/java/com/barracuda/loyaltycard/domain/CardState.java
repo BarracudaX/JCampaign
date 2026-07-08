@@ -1,4 +1,4 @@
-package com.barracuda.app.loyaltycard.domain;
+package com.barracuda.loyaltycard.domain;
 
 public enum CardState {
     LOCKED,
