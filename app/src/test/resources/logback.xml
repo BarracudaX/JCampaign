@@ -1,7 +1,7 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-tuple HH:mm:ss.SSS} [%thread] %X{workflow} %X{work} %X{task} %X{taskType} %-5level %logger{36}  - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-tuple HH:mm:ss.SSS} [%thread] %magenta(%property{MY_PID}) %X{workflow} %X{work} %X{task} %X{taskType} %-5level %logger{36}  - %msg%n</pattern>
         </encoder>
     </appender>
 

@@ -1,7 +1,0 @@
-package com.barracuda.workflow.domain;
-
-public enum WorkflowStatus {
-
-    CREATED,RUNNING,PAUSED,REQUEST_PAUSING,COMPLETED,CANCELED,FAILED,COMPENSATED,COMPENSATING,ERROR
-
-}

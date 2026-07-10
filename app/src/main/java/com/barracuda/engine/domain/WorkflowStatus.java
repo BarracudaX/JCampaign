@@ -1,0 +1,7 @@
+package com.barracuda.engine.domain;
+
+public enum WorkflowStatus {
+
+    NOT_INITIALIZED, INITIALIZED,RUNNING,PAUSED, COMPLETED,CANCELED,FAILED,COMPENSATED,COMPENSATING,ERROR
+
+}
