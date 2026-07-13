@@ -2,8 +2,7 @@ package com.barracuda.engine.listener;
 
 public sealed interface WorkflowEvent {
 
-    record WorkflowStartedEvent() implements WorkflowEvent{
-    }
+    record WorkflowStartedEvent() implements WorkflowEvent{ }
 
     record WorkflowCompletedEvent() implements WorkflowEvent{}
 

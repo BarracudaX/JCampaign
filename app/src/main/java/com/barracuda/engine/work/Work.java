@@ -3,7 +3,7 @@ package com.barracuda.engine.work;
 
 import com.barracuda.engine.listener.WorkflowComponent;
 
-public interface Work extends WorkflowComponent {
+public interface Work {
 
-    WorkResult execute();
+    void execute();
 }

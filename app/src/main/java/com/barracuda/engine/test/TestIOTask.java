@@ -22,12 +22,12 @@ public class TestIOTask extends IOTask {
     }
 
     @Override
-    public TaskResult executeTask() {
-        return work();
+    public void executeTask() {
+        work();
     }
 
 
-    private TaskResult work(){
+    private TaskResult work() {
 
         logger.info("Executing task {}",this);
 
@@ -35,23 +35,17 @@ public class TestIOTask extends IOTask {
 
         while(System.nanoTime() < endTime && !Thread.currentThread().isInterrupted()){
             logger.info("Task doing some work... {}",this);
+            logger.info("About to block for {}",sleep);
             try {
-                logger.info("About to block for {}",sleep);
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                return TaskResult.PAUSED;
             }
         }
 
         if(System.nanoTime() >= endTime){
             logger.info("Finished executing task {}",this);
             return TaskResult.COMPLETED;
-        }
-
-        if(Thread.currentThread().isInterrupted()){
-            logger.info("Task {} has been requested to pause",this);
-            return TaskResult.PAUSED;
         }
 
         throw new IllegalStateException("Should never reach this point");

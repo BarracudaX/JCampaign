@@ -32,10 +32,10 @@ public class WorkflowDefinitionTest {
     }
 
     @Test
-    void test() throws InterruptedException {
+    void test() throws InterruptedException, ExecutionException {
 
 
-        RootWorkflow workflow = new RootWorkflowImpl("Test Workflow", 1, Duration.ofSeconds(2), cpuExecutorService);
+        RootWorkflow workflow = new RootWorkflowImpl("Test Workflow", 1, Duration.ofMillis(100), cpuExecutorService);
 
         workflow.addWork(
                 new ParallelWork(
@@ -72,13 +72,15 @@ public class WorkflowDefinitionTest {
 
         var workflowExecution = virtualThreadExecutor.submit(workflow::execute);
 
+
         Thread.sleep(150);
 
         workflowExecution.cancel(true);
 
         Awaitility.await().until(() -> workflow.status() == WorkflowStatus.PAUSED);
 
-        virtualThreadExecutor.submit(workflow::execute);
+
+        virtualThreadExecutor.submit(workflow::execute).get();
 
         Awaitility.await().atMost(Duration.ofSeconds(5)).until(() -> workflow.status() == WorkflowStatus.COMPLETED);
     }

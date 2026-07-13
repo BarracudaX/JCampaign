@@ -11,17 +11,17 @@ public non-sealed abstract class IOTask extends AbstractTask {
         super(name,id);
     }
 
-    public final TaskResult execute(){
+    public final void execute(){
 
         MDC.put("task", " - ["+name+"-"+id+"]");
         MDC.put("taskType", " - [IO]");
         try{
-            return executeTask();
+            executeTask();
         }finally {
             MDC.remove("task");
             MDC.remove("taskType");
         }
     }
 
-    protected abstract TaskResult executeTask();
+    protected abstract void executeTask();
 }

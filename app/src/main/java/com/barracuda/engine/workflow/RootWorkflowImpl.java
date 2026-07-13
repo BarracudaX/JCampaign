@@ -19,7 +19,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
+
 public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
+
 
     private final CopyOnWriteArrayList<WorkflowExecutionListener> listeners = new CopyOnWriteArrayList<>();
     private final Logger logger = LoggerFactory.getLogger(RootWorkflowImpl.class);
@@ -62,7 +64,7 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
     }
 
     @Override
-    protected void workPaused(Work work) {
+    protected void workflowInterrupted() {
         if (!workflowStatus.compareAndSet(WorkflowStatus.RUNNING, WorkflowStatus.PAUSED)) {
             throw new IllegalStateException("Requested pausing while workflow isn't running.");
         }
@@ -86,6 +88,11 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
     }
 
     @Override
+    protected WorkflowContext context() {
+        return context;
+    }
+
+    @Override
     public void registerListener(WorkflowExecutionListener listener){
         listeners.add(listener);
     }
@@ -105,14 +112,6 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
 
     @Override
     public void initialize() {
-        if(workflowStatus.get() != WorkflowStatus.NOT_INITIALIZED){
-            throw new IllegalStateException("Workflow has already been initialize and is in "+workflowStatus.get().name()+" state.");
-        }
-
-        for(Work work : works) {
-            work.configure(context);
-        }
-
         if(!workflowStatus.compareAndSet(WorkflowStatus.NOT_INITIALIZED, WorkflowStatus.INITIALIZED)) {
             throw new IllegalStateException("Workflow cannot be initialized due to its current state being "+workflowStatus.get().name());
         }

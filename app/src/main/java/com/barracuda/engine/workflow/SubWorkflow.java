@@ -7,10 +7,9 @@ import com.barracuda.engine.work.Work;
 
 import java.util.List;
 
-public class SubWorkflow extends AbstractWorkflow implements WorkflowComponent {
+public class SubWorkflow extends AbstractWorkflow {
 
     private final List<Work> works;
-    private volatile WorkflowEventPublisher workflowEventPublisher;
 
     public SubWorkflow(String name, long id, List<Work> works) {
         super(name, id);
@@ -21,25 +20,25 @@ public class SubWorkflow extends AbstractWorkflow implements WorkflowComponent {
     @Override
     protected void workflowStarting() {
         if(currentlyRunningTaskIndex.get() == 0){
-            workflowEventPublisher.publishEvent(new SubWorkflowStartedEvent());
+            WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowStartedEvent());
         }else {
-            workflowEventPublisher.publishEvent(new SubWorkflowResumedEvent());
+            WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowResumedEvent());
         }
     }
 
     @Override
     protected void workflowCompleted() {
-        workflowEventPublisher.publishEvent(new SubWorkflowCompletedEvent());
+        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowCompletedEvent());
     }
 
     @Override
     protected void workFailed(Exception e, Work work) {
-        workflowEventPublisher.publishEvent(new SubWorkflowFailedEvent());
+        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowFailedEvent());
     }
 
     @Override
-    protected void workPaused(Work work) {
-        workflowEventPublisher.publishEvent(new SubWorkflowPausedEvent());
+    protected void workflowInterrupted() {
+        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowPausedEvent());
     }
 
     @Override
@@ -48,10 +47,8 @@ public class SubWorkflow extends AbstractWorkflow implements WorkflowComponent {
     }
 
     @Override
-    public void configure(WorkflowContext context) {
-        this.workflowEventPublisher = context.getEventPublisher();
-        for(Work work : works){
-            work.configure(context);
-        }
+    protected WorkflowContext context() {
+        return null;
     }
+
 }

@@ -18,7 +18,7 @@ public class TestCpuTask extends CpuTask {
     }
 
     @Override
-    public TaskResult executeTask(TimeSlot timeSlot) {
+    public void executeTask(TimeSlot timeSlot) throws TaskNeedMoreTimeException {
 
         logger.info("Executing task {}",this);
         double dummyValue = 0.12345;
@@ -30,7 +30,7 @@ public class TestCpuTask extends CpuTask {
             if(timeSlot.hasExpired()){
                 logger.info("TimeSlot has expired. Task {} needs more time",this);
                 remainingNanos -= (System.nanoTime() - loopStartTime);
-                return TaskResult.NEED_MORE_TIME;
+                throw new TaskNeedMoreTimeException();
             }
 
             dummyValue = Math.sin(Math.cos(Math.tan(dummyValue))) + Math.log(dummyValue + 1.0);
@@ -41,7 +41,7 @@ public class TestCpuTask extends CpuTask {
 
         if(Thread.currentThread().isInterrupted()){
             logger.info("Task {} has been requested to pause",this);
-            return TaskResult.PAUSED;
+            return ;
         }
 
         if (dummyValue == 999.999) {
@@ -49,8 +49,6 @@ public class TestCpuTask extends CpuTask {
         }
 
         logger.info("Finished executing task {}",this);
-
-        return TaskResult.COMPLETED;
     }
 
 }

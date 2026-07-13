@@ -3,6 +3,7 @@ plugins {
     id("org.springframework.boot") version "4.0.6"
     id("io.spring.dependency-management") version "1.1.7"
     id("io.freefair.lombok") version "9.5.0"
+    id("com.github.spotbugs") version "6.5.9"
 }
 
 java {
@@ -44,6 +45,7 @@ dependencies {
     implementation("com.googlecode.libphonenumber:libphonenumber:9.0.31")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0")
 
 
     runtimeOnly("org.postgresql:postgresql")
@@ -59,7 +61,24 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+spotbugs{
+    ignoreFailures = true
+}
+
+tasks.spotbugsMain {
+    reports.create("html") {
+        required = true
+        outputLocation = file("${project.layout.buildDirectory.get()}/reports/spotbugs.html")
+        setStylesheet("fancy-hist.xsl")
+    }
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
     maxHeapSize = "4g"
+    jvmArgs = listOf("--enable-preview")
+}
+
+tasks.withType<JavaCompile>(){
+    this.options.compilerArgs.add("--enable-preview")
 }

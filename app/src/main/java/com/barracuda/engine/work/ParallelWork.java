@@ -2,6 +2,7 @@ package com.barracuda.engine.work;
 
 import com.barracuda.engine.listener.WorkflowComponent;
 import com.barracuda.engine.workflow.SubWorkflow;
+import com.barracuda.engine.workflow.Workflow;
 import com.barracuda.engine.workflow.WorkflowContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +11,9 @@ import org.slf4j.MDC;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.StructuredTaskScope.Joiner;
 
-public class ParallelWork extends AbstractWork implements WorkflowComponent {
+public class ParallelWork extends AbstractWork {
 
     private final Logger logger = LoggerFactory.getLogger(ParallelWork.class);
     private final List<SubWorkflow> workflows;
@@ -25,46 +27,29 @@ public class ParallelWork extends AbstractWork implements WorkflowComponent {
     }
 
     @Override
-    protected WorkResult executeWork() {
+    protected void executeWork() {
         logger.info("Executing parallel work {}",this);
-        Map<String, String> logContext = MDC.getCopyOfContextMap();
-        List<Callable<Void>> callables = workflows.stream().map( workflow -> (Callable<Void>)() -> {
-            if(logContext != null){
-                MDC.setContextMap(logContext);
-            }
-            workflow.execute();
-            return null;
-        }).toList();
 
-        List<Future<Void>> results = callables.stream().map(executor::submit).toList();
-        try {
+
+        try(var scope = StructuredTaskScope.open(Joiner.awaitAllSuccessfulOrThrow())){
             logger.info("Invoking all parallel works.");
 
-            for(var result : results){
-                result.get();
+            for(var subworkflow : workflows){
+                scope.fork(subworkflow::execute);
             }
 
-        } catch (InterruptedException e) {
-            logger.info("Parallel Work Interrupted. Pausing requested.");
-            Thread.currentThread().interrupt();
-            results.forEach(future -> future.cancel(true));
-            return WorkResult.PAUSED;
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            try {
+                scope.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
+
         if(nextWork != null) {
             logger.info("Parallel sub workflows finished. Executing the final work {}",nextWork);
-            return nextWork.execute();
-        }else{
-            logger.info("Parallel sub workflows finished. No next work. Completed.");
-            return WorkResult.COMPLETED;
+            nextWork.execute();
         }
+        logger.info("Parallel sub workflows finished. No next work. Completed.");
     }
 
-    @Override
-    public void configure(WorkflowContext context) {
-        for(SubWorkflow subWorkflow : workflows){
-            subWorkflow.configure(context);
-        }
-    }
 }

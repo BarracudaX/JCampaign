@@ -17,15 +17,15 @@ abstract class AbstractWork implements Work {
     }
 
     @Override
-    public final WorkResult execute() {
+    public final void execute() {
         MDC.put("work", " - ["+name+"-"+id+"]");
         try{
-            return executeWork();
+            executeWork();
         } finally {
             MDC.remove("work");
         }
     }
 
-    protected abstract WorkResult executeWork();
+    protected abstract void executeWork();
 
 }

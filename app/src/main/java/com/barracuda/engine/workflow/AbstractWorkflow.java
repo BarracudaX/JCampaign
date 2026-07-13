@@ -1,14 +1,15 @@
 package com.barracuda.engine.workflow;
 
-import com.barracuda.engine.listener.WorkflowEvent.*;
 import com.barracuda.engine.work.Work;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.concurrent.StructuredTaskScope;
+import java.util.concurrent.StructuredTaskScope.Joiner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -17,6 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @ToString(onlyExplicitlyIncluded = true)
 public abstract class AbstractWorkflow implements Workflow {
+
+    public static final ScopedValue<WorkflowContext> WORKFLOW_CONTEXT = ScopedValue.newInstance();
 
     private final Logger logger = LoggerFactory.getLogger(AbstractWorkflow.class);
     @ToString.Include
@@ -34,8 +37,6 @@ public abstract class AbstractWorkflow implements Workflow {
 
     @Override
     public void execute() {
-        MDC.put("workflow", " - [" + name + "-" + id + "]");
-
         if (!Thread.currentThread().isVirtual()) {
             logger.error("Workflow {} has not been started in the virtual thread", this);
             throw new IllegalStateException("Workflow should be executed in a virtual thread.");
@@ -43,28 +44,41 @@ public abstract class AbstractWorkflow implements Workflow {
 
         logger.info("Executing workflow {} starting at work {}\n", this, currentlyRunningTaskIndex.get());
 
+        WorkflowContext context;
+
+        try{
+            context = WORKFLOW_CONTEXT.get();
+        }catch (NoSuchElementException e){
+            context = Objects.requireNonNull(context());
+        }
+
+        ScopedValue.where(WORKFLOW_CONTEXT, context).run(this::executeWorkflow);
+    }
+
+    private void executeWorkflow() {
+
         workflowStarting();
 
         var works = works();
 
         for (int i = currentlyRunningTaskIndex.get(); i < works.size(); i++) {
+
             Work work = works.get(i);
 
             logger.info("Executing work {}\n", work);
 
-            try {
-                switch (work.execute()) {
-                    case COMPLETED -> completedWork(work);
-                    case PAUSED -> {
-                        workPaused(work);
-                        return;
-                    }
+            try(var scope = StructuredTaskScope.open(Joiner.anySuccessfulOrThrow())) {
+
+                scope.fork(work::execute);
+
+                try {
+                    scope.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    workflowInterrupted();
+                    return;
                 }
-            } catch (Exception e) {
-                workFailed(e, work);
-                throw e;
-            } finally {
-                MDC.remove("workflow");
+                workCompleted(work);
             }
         }
 
@@ -77,14 +91,16 @@ public abstract class AbstractWorkflow implements Workflow {
 
     protected abstract void workFailed(Exception e,Work work);
 
-    protected abstract void workPaused(Work work);
+    protected abstract void workflowInterrupted();
 
     protected abstract List<Work> works();
 
-    private void completedWork(Work work) {
+    private void workCompleted(Work work) {
         logger.info("Work {} completed\n", work);
 
         currentlyRunningTaskIndex.incrementAndGet();
     }
+
+    protected abstract WorkflowContext context();
 
 }

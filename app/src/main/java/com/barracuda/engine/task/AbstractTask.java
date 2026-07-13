@@ -1,7 +1,9 @@
 package com.barracuda.engine.task;
 
 import com.barracuda.engine.workflow.WorkflowContext;
+import lombok.ToString;
 
+@ToString
 public abstract sealed class AbstractTask implements Task permits IOTask,CpuTask{
 
     protected final String name;
@@ -12,7 +14,4 @@ public abstract sealed class AbstractTask implements Task permits IOTask,CpuTask
         this.id = id;
     }
 
-    @Override
-    public void configure(WorkflowContext context) {
-    }
 }
