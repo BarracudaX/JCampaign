@@ -6,10 +6,14 @@ import com.barracuda.engine.test.TaskNeedMoreTimeException;
 import lombok.ToString;
 import org.slf4j.MDC;
 
-public non-sealed abstract class CpuTask extends AbstractTask {
+public non-sealed abstract class CpuTask implements Task {
 
-    protected CpuTask(String name,long id) {
-        super(name,id);
+    private final String name;
+    private final long id;
+
+    protected CpuTask(String name, long id) {
+        this.name = name;
+        this.id = id;
     }
 
     public final void execute(TimeSlot timeSlot) {

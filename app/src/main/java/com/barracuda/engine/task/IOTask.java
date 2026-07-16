@@ -5,11 +5,16 @@ import lombok.ToString;
 import org.slf4j.MDC;
 
 @ToString
-public non-sealed abstract class IOTask extends AbstractTask {
+public non-sealed abstract class IOTask implements Task{
 
-    protected IOTask(String name,long id) {
-        super(name,id);
+    private final String name;
+    private final long id;
+
+    protected IOTask(String name, long id) {
+        this.name = name;
+        this.id = id;
     }
+
 
     public final void execute(){
 
