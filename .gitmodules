@@ -1,0 +1,3 @@
+[submodule "WorkflowJ"]
+	path = WorkflowJ
+	url = https://github.com/BarracudaX/WorkflowJ.git
