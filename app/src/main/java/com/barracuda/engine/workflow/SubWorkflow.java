@@ -1,8 +1,6 @@
 package com.barracuda.engine.workflow;
 
-import com.barracuda.engine.listener.WorkflowComponent;
 import com.barracuda.engine.listener.WorkflowEvent.*;
-import com.barracuda.engine.listener.WorkflowEventPublisher;
 import com.barracuda.engine.work.Work;
 
 import java.util.List;
@@ -16,6 +14,11 @@ public class SubWorkflow extends AbstractWorkflow {
         this.works = List.copyOf(works);
     }
 
+
+    @Override
+    protected void workflowFailed(Exception exception) {
+        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowFailedEvent());
+    }
 
     @Override
     protected void workflowStarting() {
@@ -48,7 +51,7 @@ public class SubWorkflow extends AbstractWorkflow {
 
     @Override
     protected WorkflowContext context() {
-        return null;
+        return new WorkflowContext(WORKFLOW_CONTEXT.get());
     }
 
 }

@@ -2,15 +2,12 @@ package com.barracuda.engine.test;
 
 import com.barracuda.engine.domain.*;
 import com.barracuda.engine.task.CpuTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
 public class TestCpuTask extends CpuTask {
 
     private long remainingNanos;
-    private final Logger logger = LoggerFactory.getLogger(TestCpuTask.class);
 
     public TestCpuTask(String name,long id,Duration duration) {
         super(name,id);
@@ -20,7 +17,6 @@ public class TestCpuTask extends CpuTask {
     @Override
     public void executeTask(TimeSlot timeSlot) throws TaskNeedMoreTimeException {
 
-        logger.info("Executing task {}",this);
         double dummyValue = 0.12345;
 
         long loopStartTime = System.nanoTime();
@@ -28,7 +24,6 @@ public class TestCpuTask extends CpuTask {
         while (remainingNanos > 0 && !Thread.currentThread().isInterrupted()) {
 
             if(timeSlot.hasExpired()){
-                logger.info("TimeSlot has expired. Task {} needs more time",this);
                 remainingNanos -= (System.nanoTime() - loopStartTime);
                 throw new TaskNeedMoreTimeException();
             }
@@ -40,7 +35,6 @@ public class TestCpuTask extends CpuTask {
         }
 
         if(Thread.currentThread().isInterrupted()){
-            logger.info("Task {} has been requested to pause",this);
             return ;
         }
 
@@ -48,7 +42,6 @@ public class TestCpuTask extends CpuTask {
             System.out.println("If this prints, you broke mathematics: " + dummyValue);
         }
 
-        logger.info("Finished executing task {}",this);
     }
 
 }

@@ -15,10 +15,4 @@ public interface RootWorkflow extends Workflow, WorkflowEventPublisher {
 
     WorkflowStatus status();
 
-    void addWork(Work work);
-
-    /**
-     * Initializes the workflow. Must be called before executing this workflow.
-     */
-    void initialize();
 }

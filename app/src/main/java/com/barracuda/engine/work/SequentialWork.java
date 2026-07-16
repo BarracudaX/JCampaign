@@ -6,15 +6,9 @@ import com.barracuda.engine.task.CpuTask;
 import com.barracuda.engine.task.IOTask;
 import com.barracuda.engine.task.Task;
 import com.barracuda.engine.test.TaskNeedMoreTimeException;
-import com.barracuda.engine.workflow.AbstractWorkflow;
-import com.barracuda.engine.workflow.WorkflowContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -31,7 +25,6 @@ public class SequentialWork extends AbstractWork {
 
     private final AtomicInteger currentlyRunningTaskIndex = new AtomicInteger(0);
     private final List<Task> tasks;
-    private final Logger logger = LoggerFactory.getLogger(SequentialWork.class);
 
     public SequentialWork(String name, long id, List<Task> tasks) {
         super(name, id);
@@ -42,14 +35,10 @@ public class SequentialWork extends AbstractWork {
     protected final void executeWork() {
         int startIndex = currentlyRunningTaskIndex.get();
 
-        logger.info("Executing work {} starting at task {}\n", this, currentlyRunningTaskIndex.get());
-
         for (int i = startIndex; i < tasks.size(); i++) {
 
             try(var scope = StructuredTaskScope.open(Joiner.<TaskResult>anySuccessfulOrThrow())){
                 Task task = tasks.get(i);
-
-                logger.info("Executing task {}\n", task);
 
                 scope.fork(() -> runTask(task));
 
@@ -61,7 +50,6 @@ public class SequentialWork extends AbstractWork {
             }
         }
 
-        logger.info("Executing work {} finished\n", this);
     }
 
 
@@ -74,8 +62,8 @@ public class SequentialWork extends AbstractWork {
 
     private void runCPUTask(CpuTask cpuTask) {
 
-        ExecutorService cpuExecutorService = WORKFLOW_CONTEXT.get().cpuExecutorService();
-        Duration timeSlot = WORKFLOW_CONTEXT.get().cpuTimeSlot();
+        ExecutorService cpuExecutorService = WORKFLOW_CONTEXT.get().getCpuExecutorService();
+        Duration timeSlot = WORKFLOW_CONTEXT.get().getCpuTimeSlot();
 
         while(!Thread.currentThread().isInterrupted()) {
 
@@ -88,9 +76,7 @@ public class SequentialWork extends AbstractWork {
                 cpuTaskFuture.cancel(true);
                 Thread.currentThread().interrupt();
             } catch (ExecutionException e) {
-                if(e.getCause() instanceof TaskNeedMoreTimeException) {
-                    logger.info("CPU task {} requested more time",cpuTask);
-                }else{
+                if (!(e.getCause() instanceof TaskNeedMoreTimeException)) {
                     throw new RuntimeException(e);
                 }
             }

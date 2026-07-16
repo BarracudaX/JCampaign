@@ -2,11 +2,8 @@ package com.barracuda.engine.workflow;
 
 import com.barracuda.engine.work.Work;
 import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.concurrent.StructuredTaskScope.Joiner;
@@ -21,7 +18,6 @@ public abstract class AbstractWorkflow implements Workflow {
 
     public static final ScopedValue<WorkflowContext> WORKFLOW_CONTEXT = ScopedValue.newInstance();
 
-    private final Logger logger = LoggerFactory.getLogger(AbstractWorkflow.class);
     @ToString.Include
     protected final AtomicInteger currentlyRunningTaskIndex = new AtomicInteger(0);
     @ToString.Include
@@ -38,22 +34,18 @@ public abstract class AbstractWorkflow implements Workflow {
     @Override
     public void execute() {
         if (!Thread.currentThread().isVirtual()) {
-            logger.error("Workflow {} has not been started in the virtual thread", this);
             throw new IllegalStateException("Workflow should be executed in a virtual thread.");
         }
 
-        logger.info("Executing workflow {} starting at work {}\n", this, currentlyRunningTaskIndex.get());
-
-        WorkflowContext context;
-
-        try{
-            context = WORKFLOW_CONTEXT.get();
-        }catch (NoSuchElementException e){
-            context = Objects.requireNonNull(context());
+        try {
+            ScopedValue.where(WORKFLOW_CONTEXT, Objects.requireNonNull(context())).run(this::executeWorkflow);
+        } catch (Exception ex) {
+            workflowFailed(ex);
+            throw ex;
         }
-
-        ScopedValue.where(WORKFLOW_CONTEXT, context).run(this::executeWorkflow);
     }
+
+    protected abstract void workflowFailed(Exception exception);
 
     private void executeWorkflow() {
 
@@ -64,8 +56,6 @@ public abstract class AbstractWorkflow implements Workflow {
         for (int i = currentlyRunningTaskIndex.get(); i < works.size(); i++) {
 
             Work work = works.get(i);
-
-            logger.info("Executing work {}\n", work);
 
             try(var scope = StructuredTaskScope.open(Joiner.anySuccessfulOrThrow())) {
 
@@ -96,8 +86,6 @@ public abstract class AbstractWorkflow implements Workflow {
     protected abstract List<Work> works();
 
     private void workCompleted(Work work) {
-        logger.info("Work {} completed\n", work);
-
         currentlyRunningTaskIndex.incrementAndGet();
     }
 

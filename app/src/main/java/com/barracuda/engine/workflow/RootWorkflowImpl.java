@@ -2,14 +2,13 @@ package com.barracuda.engine.workflow;
 
 import com.barracuda.engine.domain.WorkflowStatus;
 import com.barracuda.engine.listener.WorkflowEvent;
+import com.barracuda.engine.listener.WorkflowEvent.WorkflowFailedEvent;
 import com.barracuda.engine.listener.WorkflowEvent.WorkflowResumedEvent;
 import com.barracuda.engine.listener.WorkflowEvent.WorkflowStartedEvent;
 import com.barracuda.engine.listener.WorkflowExecutionListener;
+import com.barracuda.engine.store.WorkflowStore;
 import com.barracuda.engine.work.Work;
 import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -24,15 +23,23 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
 
 
     private final CopyOnWriteArrayList<WorkflowExecutionListener> listeners = new CopyOnWriteArrayList<>();
-    private final Logger logger = LoggerFactory.getLogger(RootWorkflowImpl.class);
     private final WorkflowContext context;
     @ToString.Include
-    private final AtomicReference<WorkflowStatus> workflowStatus = new AtomicReference<>(WorkflowStatus.NOT_INITIALIZED);
+    private final AtomicReference<WorkflowStatus> workflowStatus = new AtomicReference<>(WorkflowStatus.INITIALIZED);
     private final List<Work> works = Collections.synchronizedList(new ArrayList<>());
 
-    public RootWorkflowImpl(String name, long id, Duration cpuTimeSlot, ExecutorService cpuExecutorService) {
+    public RootWorkflowImpl(String name, long id, Duration cpuTimeSlot, ExecutorService cpuExecutorService, WorkflowStore workflowStore, List<Work> works) {
         super(name, id);
-        this.context = new WorkflowContext(cpuExecutorService, cpuTimeSlot, this);
+        this.works.addAll(works);
+        this.context = new WorkflowContext(cpuExecutorService, cpuTimeSlot, this,workflowStore);
+    }
+
+    @Override
+    protected void workflowFailed(Exception exception) {
+        if(!workflowStatus.compareAndSet(WorkflowStatus.RUNNING, WorkflowStatus.FAILED)){
+            throw new IllegalStateException("Workflow failed with an exception while not running. Curren status: "+workflowStatus.get(),exception);
+        }
+        publishEvent(new WorkflowFailedEvent());
     }
 
     @Override
@@ -45,10 +52,6 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
 
     @Override
     protected void workflowCompleted() {
-        logger.info("Workflow {} completed\n", this);
-
-        MDC.remove("workflow");
-
         publishEvent(new WorkflowEvent.WorkflowCompletedEvent());
 
         workflowStatus.set(WorkflowStatus.COMPLETED);
@@ -56,9 +59,7 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
 
     @Override
     protected void workFailed(Exception e, Work work) {
-        logger.error("Error executing work {}\n", work, e);
-
-        publishEvent(new WorkflowEvent.WorkflowFailedEvent());
+        publishEvent(new WorkflowFailedEvent());
 
         workflowStatus.set(WorkflowStatus.FAILED);
     }
@@ -70,8 +71,6 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
         }
 
         publishEvent(new WorkflowEvent.WorkflowPausedEvent());
-
-        logger.info("Workflow {} paused\n", this);
     }
 
     private void publishStartEvent() {
@@ -102,21 +101,6 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
         return workflowStatus.get();
     }
 
-    @Override
-    public void addWork(Work work) {
-        if(workflowStatus.get() != WorkflowStatus.NOT_INITIALIZED) {
-            throw new IllegalStateException("Cannot add work because workflow state is " + workflowStatus.get().name());
-        }
-        works.add(work);
-    }
-
-    @Override
-    public void initialize() {
-        if(!workflowStatus.compareAndSet(WorkflowStatus.NOT_INITIALIZED, WorkflowStatus.INITIALIZED)) {
-            throw new IllegalStateException("Workflow cannot be initialized due to its current state being "+workflowStatus.get().name());
-        }
-
-    }
 
     public void publishEvent(WorkflowEvent event){
         for(WorkflowExecutionListener listener : listeners){
