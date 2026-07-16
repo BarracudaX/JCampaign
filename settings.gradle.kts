@@ -1,4 +1,4 @@
 rootProject.name = "JCampaign"
 
 include("app")
-include("engine")
+include("WorkflowJ")
