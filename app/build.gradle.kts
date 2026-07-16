@@ -43,7 +43,6 @@ dependencies {
     implementation("org.mapstruct:mapstruct:1.6.3")
     implementation("commons-validator:commons-validator:1.10.1")
     implementation("com.googlecode.libphonenumber:libphonenumber:9.0.31")
-    implementation("org.apache.fory:fory-core:1.3.0")
 
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
     spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0")
@@ -80,6 +79,3 @@ tasks.withType<Test> {
     jvmArgs = listOf("--enable-preview","--add-opens=java.base/java.lang.invoke=ALL-UNNAMED")
 }
 
-tasks.withType<JavaCompile>(){
-    this.options.compilerArgs.add("--enable-preview")
-}

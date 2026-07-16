@@ -1,10 +1,10 @@
 package com.barracuda.engine.workflow;
 
 import com.barracuda.engine.domain.WorkflowStatus;
-import com.barracuda.engine.listener.WorkflowEvent;
-import com.barracuda.engine.listener.WorkflowEvent.WorkflowFailedEvent;
-import com.barracuda.engine.listener.WorkflowEvent.WorkflowResumedEvent;
-import com.barracuda.engine.listener.WorkflowEvent.WorkflowStartedEvent;
+import com.barracuda.engine.event.WorkflowEvent;
+import com.barracuda.engine.event.WorkflowEvent.WorkflowFailedEvent;
+import com.barracuda.engine.event.WorkflowEvent.WorkflowResumedEvent;
+import com.barracuda.engine.event.WorkflowEvent.WorkflowStartedEvent;
 import com.barracuda.engine.listener.WorkflowExecutionListener;
 import com.barracuda.engine.store.WorkflowStore;
 import com.barracuda.engine.work.Work;
@@ -39,7 +39,7 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
         if(!workflowStatus.compareAndSet(WorkflowStatus.RUNNING, WorkflowStatus.FAILED)){
             throw new IllegalStateException("Workflow failed with an exception while not running. Curren status: "+workflowStatus.get(),exception);
         }
-        publishEvent(new WorkflowFailedEvent());
+//        publishEvent(new WorkflowFailedEvent());
     }
 
     @Override
@@ -52,14 +52,14 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
 
     @Override
     protected void workflowCompleted() {
-        publishEvent(new WorkflowEvent.WorkflowCompletedEvent());
+//        publishEvent(new WorkflowEvent.WorkflowCompletedEvent());
 
         workflowStatus.set(WorkflowStatus.COMPLETED);
     }
 
     @Override
     protected void workFailed(Exception e, Work work) {
-        publishEvent(new WorkflowFailedEvent());
+//        publishEvent(new WorkflowFailedEvent());
 
         workflowStatus.set(WorkflowStatus.FAILED);
     }
@@ -70,14 +70,14 @@ public class RootWorkflowImpl extends AbstractWorkflow implements RootWorkflow{
             throw new IllegalStateException("Requested pausing while workflow isn't running.");
         }
 
-        publishEvent(new WorkflowEvent.WorkflowPausedEvent());
+//        publishEvent(new WorkflowEvent.WorkflowPausedEvent());
     }
 
     private void publishStartEvent() {
         if (currentlyRunningTaskIndex.get() == 0) {
-            publishEvent(new WorkflowStartedEvent());
+//            publishEvent(new WorkflowStartedEvent());
         } else {
-            publishEvent(new WorkflowResumedEvent());
+//            publishEvent(new WorkflowResumedEvent());
         }
     }
 

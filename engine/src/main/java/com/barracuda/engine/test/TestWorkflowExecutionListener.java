@@ -1,7 +1,7 @@
 package com.barracuda.engine.test;
 
 import com.barracuda.engine.workflow.AbstractWorkflow;
-import com.barracuda.engine.listener.WorkflowEvent;
+import com.barracuda.engine.event.WorkflowEvent;
 import com.barracuda.engine.listener.WorkflowExecutionListener;
 
 import java.util.List;

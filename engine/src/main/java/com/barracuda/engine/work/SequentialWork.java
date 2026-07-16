@@ -52,6 +52,11 @@ public class SequentialWork extends AbstractWork {
 
     }
 
+    @Override
+    protected void workFailed(Exception ex) {
+
+    }
+
 
     private void runTask(Task task) {
         switch (task){

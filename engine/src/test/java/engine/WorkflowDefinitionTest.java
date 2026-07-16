@@ -1,4 +1,4 @@
-package com.barracuda.engine;
+package engine;
 
 import com.barracuda.engine.domain.WorkflowStatus;
 import com.barracuda.engine.store.FileSystemWorkflowStore;
@@ -12,9 +12,9 @@ import com.barracuda.engine.workflow.RootWorkflowImpl;
 import com.barracuda.engine.workflow.SubWorkflow;
 import org.apache.fory.Fory;
 import org.apache.fory.ThreadSafeFory;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import java.nio.file.Path;
 import java.time.Duration;

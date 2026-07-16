@@ -1,9 +1,8 @@
 package com.barracuda.engine.workflow;
 
 import com.barracuda.engine.domain.WorkflowStatus;
-import com.barracuda.engine.listener.WorkflowEventPublisher;
+import com.barracuda.engine.event.WorkflowEventPublisher;
 import com.barracuda.engine.listener.WorkflowExecutionListener;
-import com.barracuda.engine.work.Work;
 
 public interface RootWorkflow extends Workflow, WorkflowEventPublisher {
 

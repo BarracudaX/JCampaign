@@ -1,6 +1,6 @@
 package com.barracuda.engine.workflow;
 
-import com.barracuda.engine.listener.WorkflowEvent.*;
+import com.barracuda.engine.event.WorkflowEvent.*;
 import com.barracuda.engine.work.Work;
 
 import java.util.List;
@@ -17,31 +17,31 @@ public class SubWorkflow extends AbstractWorkflow {
 
     @Override
     protected void workflowFailed(Exception exception) {
-        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowFailedEvent());
+//        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowFailedEvent());
     }
 
     @Override
     protected void workflowStarting() {
         if(currentlyRunningTaskIndex.get() == 0){
-            WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowStartedEvent());
+//            WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowStartedEvent());
         }else {
-            WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowResumedEvent());
+//            WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowResumedEvent());
         }
     }
 
     @Override
     protected void workflowCompleted() {
-        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowCompletedEvent());
+//        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowCompletedEvent());
     }
 
     @Override
     protected void workFailed(Exception e, Work work) {
-        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowFailedEvent());
+//        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowFailedEvent());
     }
 
     @Override
     protected void workflowInterrupted() {
-        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowPausedEvent());
+//        WORKFLOW_CONTEXT.get().getEventPublisher().publishEvent(new SubWorkflowPausedEvent());
     }
 
     @Override

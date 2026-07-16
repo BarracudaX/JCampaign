@@ -2,8 +2,6 @@ package com.barracuda.engine.store;
 
 import org.apache.fory.ThreadSafeFory;
 import org.apache.fory.io.ForyInputStream;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -14,7 +12,6 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Objects;
 import java.util.Set;
 
-@Service
 public class FileSystemWorkflowStore implements WorkflowStore{
 
     private final ThreadSafeFory threadSafeFory;

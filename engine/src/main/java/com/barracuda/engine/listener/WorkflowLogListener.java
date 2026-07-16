@@ -1,6 +1,7 @@
 package com.barracuda.engine.listener;
 
-import com.barracuda.engine.listener.WorkflowEvent.*;
+import com.barracuda.engine.event.WorkflowEvent;
+import com.barracuda.engine.event.WorkflowEvent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

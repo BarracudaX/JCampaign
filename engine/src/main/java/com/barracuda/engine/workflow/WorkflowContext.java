@@ -1,6 +1,6 @@
 package com.barracuda.engine.workflow;
 
-import com.barracuda.engine.listener.WorkflowEventPublisher;
+import com.barracuda.engine.event.WorkflowEventPublisher;
 import com.barracuda.engine.store.WorkflowStore;
 import lombok.Getter;
 

@@ -1,6 +1,5 @@
 package com.barracuda.engine.task;
 
-import com.barracuda.engine.domain.TaskResult;
 import lombok.ToString;
 import org.slf4j.MDC;
 

@@ -38,4 +38,8 @@ public class ParallelWork extends AbstractWork {
         }
     }
 
+    @Override
+    protected void workFailed(Exception ex) {
+    }
+
 }

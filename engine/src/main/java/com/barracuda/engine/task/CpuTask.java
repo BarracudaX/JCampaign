@@ -1,8 +1,6 @@
 package com.barracuda.engine.task;
 
-import com.barracuda.engine.domain.TaskResult;
 import com.barracuda.engine.domain.TimeSlot;
-import com.barracuda.engine.test.TaskNeedMoreTimeException;
 import lombok.ToString;
 import org.slf4j.MDC;
 

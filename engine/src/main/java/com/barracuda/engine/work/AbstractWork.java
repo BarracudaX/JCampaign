@@ -21,11 +21,15 @@ abstract class AbstractWork implements Work {
         MDC.put("work", " - ["+name+"-"+id+"]");
         try{
             executeWork();
-        } finally {
+        } catch (Exception ex){
+            workFailed(ex);
+            throw ex;
+        } finally{
             MDC.remove("work");
         }
     }
 
     protected abstract void executeWork();
 
+    protected abstract void workFailed(Exception ex);
 }

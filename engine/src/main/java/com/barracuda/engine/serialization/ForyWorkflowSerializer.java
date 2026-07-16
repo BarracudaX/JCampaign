@@ -1,9 +1,7 @@
 package com.barracuda.engine.serialization;
 
 import org.apache.fory.ThreadSafeFory;
-import org.springframework.stereotype.Service;
 
-@Service
 public class ForyWorkflowSerializer implements WorkflowSerializer{
 
 
